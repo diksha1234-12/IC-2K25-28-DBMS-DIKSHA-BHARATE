@@ -1,0 +1,295 @@
+1. Create a simple table named countries
+SQL statement:
+CREATE TABLE countries (
+    country_id INT,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+
+Explanation: The CREATE TABLE command creates a new table named countries with three columns: country_id, country_name, and region_id.
+Q2. Create the countries table only if it does not already exist
+CREATE TABLE IF NOT EXISTS countries (
+    country_id INT,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+
+Explanation: IF NOT EXISTS prevents an error if a table named countries already exists. The existing table is not modified.
+Q3. Create the structure of dup_countries similar to countries
+CREATE TABLE dup_countries LIKE countries;
+
+
+Explanation: The LIKE clause copies the table structure, including its column definitions and indexes, but does not copy the records.
+Q4. Create a duplicate copy of countries, including structure and data
+CREATE TABLE dup_countries AS
+SELECT *
+FROM countries;
+
+
+Explanation: This statement creates dup_countries and copies all rows and column data from countries. Unlike CREATE TABLE ... LIKE, it does not copy all the original table's indexes and constraints.
+Q5. Create a countries table with a column that allows NULL values
+CREATE TABLE countries (
+    country_id INT,
+    country_name VARCHAR(50) NULL,
+    region_id INT
+);
+
+
+Explanation: The NULL constraint allows country_name to have no value. In MySQL, columns are nullable by default unless declared NOT NULL or restricted by another constraint.
+Q6. Create a jobs table and check that max_salary does not exceed 25000
+CREATE TABLE jobs (
+    job_id INT,
+    job_title VARCHAR(35),
+    min_salary DECIMAL(6,0),
+    max_salary DECIMAL(6,0),
+    CHECK (max_salary <= 25000)
+);
+
+
+Explanation:
+- CHECK is used to apply a condition to the data.
+- max_salary <= 25000 ensures that the maximum salary cannot exceed 25000.
+- The condition also permits NULL values for max_salary.
+Q7. Allow only Italy, India and China in the countries table
+CREATE TABLE countries (
+    country_id INT,
+    country_name VARCHAR(50),
+    region_id INT,
+    CHECK (country_name IN ('Italy', 'India', 'China'))
+);
+
+
+Explanation: The IN operator checks whether a value belongs to a specified list. Only Italy, India, and China satisfy this constraint.
+Q8. Create job_history with the specified end_date format
+CREATE TABLE job_history (
+    employee_id INT,
+    start_date DATE,
+    end_date DATE,
+    job_id VARCHAR(10),
+    department_id INT,
+    CHECK (
+        end_date IS NULL
+        OR DATE_FORMAT(end_date, '%d/%m/%Y') IS NOT NULL
+    )
+);
+
+
+Explanation: The DATE data type stores dates, and DATE_FORMAT() can display a date in the DD/MM/YYYY format.
+
+Important: MySQL stores DATE values in YYYY-MM-DD format. The check above does not enforce how a date is entered. To display a date in DD/MM/YYYY format, use:
+SELECT DATE_FORMAT(end_date, '%d/%m/%Y')
+FROM job_history;
+
+
+Q9. Prevent duplicate values in country_id
+CREATE TABLE countries (
+    country_id INT UNIQUE,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+
+Explanation: The UNIQUE constraint prevents duplicate non-NULL values in country_id. If the column must also reject NULL values, declare it NOT NULL.
+Q10. Set default values for columns in the jobs table
+CREATE TABLE jobs (
+    job_id INT,
+    job_title VARCHAR(35) NOT NULL DEFAULT ' ',
+    min_salary DECIMAL(6,0) DEFAULT 8000,
+    max_salary DECIMAL(6,0) DEFAULT NULL
+);
+
+
+Explanation:
+- job_title defaults to a blank space.
+- min_salary defaults to 8000.
+- max_salary defaults to NULL.
+These defaults apply when the corresponding columns are omitted from an INSERT statement or when DEFAULT is specified explicitly.
+Q11. Make country_id the primary key
+CREATE TABLE countries (
+    country_id INT PRIMARY KEY,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+
+Explanation: A primary key uniquely identifies each record. It does not allow duplicate or NULL values.
+Q12. Create a unique, auto-incremented country_id
+CREATE TABLE countries (
+    country_id INT AUTO_INCREMENT PRIMARY KEY,
+    country_name VARCHAR(50),
+    region_id INT
+);
+
+
+Explanation: AUTO_INCREMENT automatically generates a new numeric value for each inserted row when no value is supplied for country_id. The primary key guarantees uniqueness.
+Q13. Make the combination of country_id and region_id unique
+CREATE TABLE countries (
+    country_id INT,
+    country_name VARCHAR(50),
+    region_id INT,
+    UNIQUE (country_id, region_id)
+);
+
+
+Explanation: The combination of country_id and region_id cannot be duplicated. Individual values may repeat as long as the combination remains unique. For strict uniqueness, both columns should also be declared NOT NULL.
+Q14. Create job_history with a unique employee ID and a foreign key
+CREATE TABLE job_history (
+    employee_id INT UNIQUE,
+    start_date DATE,
+    end_date DATE,
+    job_id VARCHAR(10),
+    department_id INT,
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+);
+
+
+Explanation:
+- UNIQUE prevents duplicate non-NULL employee IDs.
+- FOREIGN KEY connects job_history.job_id to jobs.job_id.
+- A job ID entered into job_history must already exist in jobs.
+The referenced jobs.job_id column must have a compatible data type and be indexed as a primary or unique key.
+Q15. Create employees with a unique employee ID and a composite foreign key
+According to the assignment, the combination of department_id and manager_id must match a combination in the departments table.
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    email VARCHAR(50),
+    phone_number VARCHAR(20),
+    hire_date DATE,
+    job_id VARCHAR(10),
+    salary DECIMAL(8,2),
+    commission DECIMAL(4,2),
+    manager_id DECIMAL(6,0),
+    department_id DECIMAL(4,0),
+
+    FOREIGN KEY (department_id, manager_id)
+        REFERENCES departments(department_id, manager_id)
+);
+
+
+Explanation:
+- employee_id UNIQUE prevents duplicate non-NULL employee IDs.
+- The composite foreign key checks the combination of department_id and manager_id.
+- Both referenced columns must form an eligible key in departments. As shown in the assignment, they form a composite primary key.
+Q16. Create employees with foreign keys referencing departments and jobs
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    email VARCHAR(50),
+    phone_number VARCHAR(20),
+    hire_date DATE,
+    job_id VARCHAR(10),
+    salary DECIMAL(8,2),
+    commission DECIMAL(4,2),
+    manager_id INT,
+    department_id DECIMAL(4,0),
+
+    FOREIGN KEY (department_id)
+        REFERENCES departments(department_id),
+
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+) ENGINE=InnoDB;
+
+
+Explanation:
+- employee_id UNIQUE prevents duplicate employee IDs.
+- The department_id foreign key requires a matching department.
+- The job_id foreign key requires a matching job.
+- ENGINE=InnoDB enables foreign-key enforcement in MySQL.
+This solution assumes that the referenced jobs.job_id is VARCHAR(10), as specified in the assignment's table structure.
+Q17. Use ON UPDATE CASCADE and ON DELETE RESTRICT
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    job_id INT,
+    salary DECIMAL(8,2),
+
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+        ON UPDATE CASCADE
+        ON DELETE RESTRICT
+) ENGINE=InnoDB;
+
+
+Explanation:
+- ON UPDATE CASCADE: If a referenced job ID changes, the corresponding employee records are updated automatically.
+- ON DELETE RESTRICT: A job record cannot be deleted while employee records reference it.
+Q18. Use ON DELETE CASCADE and ON UPDATE RESTRICT
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    job_id INT,
+    salary DECIMAL(8,2),
+
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+        ON DELETE CASCADE
+        ON UPDATE RESTRICT
+) ENGINE=InnoDB;
+
+
+Explanation:
+- ON DELETE CASCADE: Deleting a job record automatically deletes employee records that reference it.
+- ON UPDATE RESTRICT: Prevents changes to a referenced job ID when those changes would violate the foreign-key relationship.
+Q19. Use ON DELETE SET NULL and ON UPDATE SET NULL
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    job_id INT NULL,
+    salary DECIMAL(8,2),
+
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+        ON DELETE SET NULL
+        ON UPDATE SET NULL
+) ENGINE=InnoDB;
+
+
+Explanation:
+- ON DELETE SET NULL: When a referenced job is deleted, the corresponding employee's job_id becomes NULL.
+- ON UPDATE SET NULL: When a referenced job ID is updated, the corresponding employee's job_id becomes NULL.
+- job_id must allow NULL values for these actions to work.
+Q20. Use ON DELETE NO ACTION and ON UPDATE NO ACTION
+CREATE TABLE employees (
+    employee_id INT UNIQUE,
+    first_name VARCHAR(20),
+    last_name VARCHAR(25),
+    job_id INT,
+    salary DECIMAL(8,2),
+
+    FOREIGN KEY (job_id)
+        REFERENCES jobs(job_id)
+        ON DELETE NO ACTION
+        ON UPDATE NO ACTION
+) ENGINE=InnoDB;
+
+
+Explanation:
+- ON DELETE NO ACTION prevents deleting a referenced job when employee records depend on it.
+- ON UPDATE NO ACTION prevents changing a referenced job ID when that change would violate referential integrity.
+- In MySQL's InnoDB engine, NO ACTION behaves like RESTRICT.
+
+Important SQL constraints for your viva
+Constraint	Purpose
+PRIMARY KEY	Uniquely identifies each row; cannot be NULL.
+UNIQUE	Prevents duplicate non-NULL values or combinations.
+NOT NULL	Prevents a column from containing NULL.
+DEFAULT	Supplies a default value when appropriate.
+CHECK	Enforces a specified condition.
+FOREIGN KEY	Maintains relationships between tables.
+AUTO_INCREMENT	Automatically generates numeric values.
+ON DELETE CASCADE	Deletes related child rows automatically.
+ON DELETE SET NULL	Sets the child foreign key to NULL.
+ON UPDATE CASCADE	Updates related child foreign keys automatically.
+RESTRICT / NO ACTION	Prevents changes that violate referential integrity.
+
+Note for submission: Questions 1–20 are answered in the same order as your uploaded assignment. For Q8, remembe
