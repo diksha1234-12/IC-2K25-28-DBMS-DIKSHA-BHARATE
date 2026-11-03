@@ -1,0 +1,140 @@
+1. Display first name and last name using aliases "First Name" and "Last Name".
+SELECT first_name AS "First Name",
+       last_name AS "Last Name"
+FROM employees;
+Explanation: AS is used to give a temporary name (alias) to a column.
+
+
+2. Get unique department IDs from the employee table.
+SELECT DISTINCT department_id
+FROM employees;
+Explanation: DISTINCT displays only unique values and removes duplicate department IDs.
+
+
+3. Display all employee details ordered by first name in descending order.
+SELECT *
+FROM employees
+ORDER BY first_name DESC;
+Explanation: DESC arranges records in reverse alphabetical order (Z to A).
+
+
+4. Display employee names, salary and PF (15% of salary).
+SELECT first_name, last_name, salary,
+       salary * 0.15 AS PF
+FROM employees;
+Explanation: PF is calculated as 15% of the employee's salary.
+
+
+5. Display employee ID, names and salary in ascending order of salary.
+SELECT employee_id, first_name, last_name, salary
+FROM employees
+ORDER BY salary ASC;
+Explanation: ASC arranges salaries from lowest to highest.
+
+
+6. Get the total salaries payable to employees.
+SELECT SUM(salary) AS Total_Salary
+FROM employees;
+Explanation: SUM() calculates the total salary of all employees.
+
+
+7. Get the maximum and minimum salary.
+SELECT MAX(salary) AS Maximum_Salary,
+       MIN(salary) AS Minimum_Salary
+FROM employees;
+Explanation:
+- MAX() finds the highest salary.
+- MIN() finds the lowest salary
+
+
+8. Get average salary and number of employees.
+SELECT AVG(salary) AS Average_Salary,
+       COUNT(*) AS Total_Employees
+FROM employees;
+
+Explanation:
+- AVG() calculates average salary.
+- COUNT() counts the total number of records.
+
+
+9. Get the number of employees working in the company.
+SELECT COUNT(*) AS Number_of_Employees
+FROM employees;
+Explanation: COUNT(*) counts all employee records.
+
+
+10. Get the number of different jobs available in the employees table.
+SELECT COUNT(DISTINCT job_id) AS Number_of_Jobs
+FROM employees;
+Explanation: It counts the unique job IDs in the employee table.
+
+
+11. Display all first names in uppercase.
+SELECT UPPER(first_name)
+FROM employees;
+Explanation: UPPER() converts lowercase letters into uppercase letters.
+
+
+12. Get the first 3 characters of first name.
+SELECT SUBSTR(first_name, 1, 3)
+FROM employees;
+Explanation: SUBSTR() extracts a particular part of a string. Here, it displays the first three characters.
+
+
+13. Calculate 171 × 214 + 625.
+SELECT 171 * 214 + 625 AS Result;
+Explanation: This query performs a mathematical calculation.
+Output: 37219
+
+
+14. Display the full names of all employees (e.g., Ellen Abel, Sundar Ande).
+SELECT first_name || ' ' || last_name AS Full_Name
+FROM employees;
+Explanation: The concatenation operator || joins first name and last name with a space between them
+Note: This syntax is for Oracle SQL.
+
+
+15. Display first names after removing white spaces from both sides.
+SELECT TRIM(first_name)
+FROM employees;
+Explanation: TRIM() removes unwanted spaces from the beginning and end of a string.
+
+
+16. Get the length of employee names (first name and last name).
+SELECT first_name, last_name,
+       LENGTH(first_name) AS First_Name_Length,
+       LENGTH(last_name) AS Last_Name_Length
+FROM employees;
+Explanation: LENGTH() counts the number of characters in a name.
+
+
+17. Check whether first_name contains numbers.
+SELECT first_name
+FROM employees
+WHERE REGEXP_LIKE(first_name, '[0-9]');
+
+
+Explanation: REGEXP_LIKE() checks whether the first name contains any numeric digit from 0 to 9.
+18. Select the first 10 records from a table.
+Oracle SQL:
+SELECT *
+FROM employees
+FETCH FIRST 10 ROWS ONLY;
+
+
+MySQL:
+SELECT *
+FROM employees
+LIMIT 10;
+
+
+Explanation: It displays only the first 10 records from the table.
+19. Calculate monthly salary of each employee (rounded to 2 decimal places).
+SELECT first_name, last_name,
+       ROUND(salary / 12, 2) AS Monthly_Salary
+FROM employees;
+
+
+Explanation:
+- Annual salary is divided by 12 to calculate monthly salary.
+- ROUND() rounds the result to 2 decimal places
